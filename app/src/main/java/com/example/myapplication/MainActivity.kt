@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -43,6 +45,8 @@ class MainActivity : AppCompatActivity() {
 fun LoginScreen() {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    // Estado para o Checkbox
+    val isChecked = remember { mutableStateOf(false) }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -68,6 +72,18 @@ fun LoginScreen() {
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(24.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Checkbox(
+                    checked = isChecked.value,
+                    onCheckedChange = { isChecked.value = it }
+                )
+                Text(text = "Manter Conectado", modifier = Modifier.padding(start = 8.dp))
+            }
+
             Button(
                 onClick = {
                     // Aqui você implementaria a lógica de autenticação
