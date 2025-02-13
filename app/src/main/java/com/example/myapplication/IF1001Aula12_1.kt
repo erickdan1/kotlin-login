@@ -24,13 +24,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import java.io.File
+import java.io.IOException
 
 class IF1001Aula12_1: AppCompatActivity() {
 
     val LOG: String = "IF1001Aula12_1"
+    // Arquivo de preferências
     val preferences: DataStore<Preferences> by preferencesDataStore(name = "Login")
+
+    // Chaves
+    val usernameKey: Preferences.Key<String> = stringPreferencesKey("username")
+    val pwdKey: Preferences.Key<String> = stringPreferencesKey("pwd")
+    val rememberKey: Preferences.Key<Boolean> = booleanPreferencesKey("remember")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +51,30 @@ class IF1001Aula12_1: AppCompatActivity() {
         setContent {
             MyUI()
         }
+    }
+
+    suspend fun writePreferences(username: String, password: String, remember: Boolean) {
+        preferences.edit {
+            it[usernameKey] = username
+            it[pwdKey] = password
+            it[rememberKey] = remember
+        }
+    }
+
+    suspend fun readPreferences(): Triple<String, String, Boolean> {
+        val result = preferences.data.catch {
+            if (it is IOException) {
+                Log.d(LOG, "aasdf")
+            }
+        }.map {
+            val resultUsername = it[usernameKey] ?: ""
+            val resultPassword = it[pwdKey] ?: ""
+            val resultRemember = it[rememberKey] ?: false
+
+            Triple(resultUsername, resultPassword, resultRemember)
+        }.first()
+
+        return result
     }
 
     fun isValidLogin(username: String, password: String): Boolean {
