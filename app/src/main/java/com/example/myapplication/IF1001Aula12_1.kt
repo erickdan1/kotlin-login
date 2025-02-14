@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,16 +21,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 
@@ -117,6 +118,14 @@ class IF1001Aula12_1: AppCompatActivity() {
         var text_password by remember { mutableStateOf(GetSavedLogin().second) }
         var remember_me by remember { mutableStateOf(GetSavedLogin().third) }
 
+        LaunchedEffect(Unit) {
+            val result = readPreferences()
+
+            text_username = result.first
+            text_password = result.second
+            remember_me = result.third
+        }
+
         Column(modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
@@ -143,16 +152,19 @@ class IF1001Aula12_1: AppCompatActivity() {
                 if (remember_me) {
 
                     if (isValidLogin(text_username, text_password)) {
-                        Log.d(LOG, "valid login")
-                        val filename: String = "login"
-                        val content: String =
-                            text_username + ";" + text_password + ";" + remember_me
-
-                        applicationContext.openFileOutput(filename, MODE_PRIVATE).use({
-                            it.write(content.toByteArray())
-                        })
-
-                        Log.d(LOG, content)
+//                        Log.d(LOG, "valid login")
+//                        val filename: String = "login"
+//                        val content: String =
+//                            text_username + ";" + text_password + ";" + remember_me
+//
+//                        applicationContext.openFileOutput(filename, MODE_PRIVATE).use({
+//                            it.write(content.toByteArray())
+//                        })
+//
+//                        Log.d(LOG, content)
+                        lifecycleScope.launch {
+                            writePreferences(text_username, text_password, remember_me)
+                        }
 
                     } else {
                         Log.d(LOG, "invalid login")
