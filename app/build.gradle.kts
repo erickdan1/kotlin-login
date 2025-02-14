@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.protobuf")
 }
 
 android {
@@ -67,4 +68,22 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("androidx.datastore:datastore-preferences-android:1.1.2")
+    implementation("androidx.datastore:datastore:1.1.2")
+    implementation("com.google.protobuf:protobuf-javalite:4.29.3")
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.29.3"
+    }
+
+    generateProtoTasks {
+        all().forEach() {
+            it.builtins {
+                create("java") {
+                    option("lite")
+                }
+            }
+        }
+    }
 }
