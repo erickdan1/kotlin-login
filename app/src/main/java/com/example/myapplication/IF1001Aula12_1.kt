@@ -28,6 +28,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.lifecycleScope
+import androidx.room.Room
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -38,6 +39,9 @@ import java.io.IOException
 class IF1001Aula12_1: AppCompatActivity() {
 
     val LOG: String = "IF1001Aula12_1"
+    lateinit var roomDB_userDetails: RoomDB_UserDetails
+
+
     // Arquivo de preferências
     val preferences: DataStore<Preferences> by preferencesDataStore(name = "Login")
 
@@ -52,7 +56,16 @@ class IF1001Aula12_1: AppCompatActivity() {
         setContent {
             MyUI()
         }
+
+        roomDB_userDetails = Room.databaseBuilder(
+            applicationContext,
+            RoomDB_UserDetails::class.java,
+            "user_details_db"
+        ).build()
+
     }
+
+    val users: List<RoomEntity_UserDetails> = roomDB_userDetails.userDao().getAll()
 
     suspend fun writePreferences(username: String, password: String, remember: Boolean) {
         preferences.edit {

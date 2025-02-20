@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.protobuf")
+    id("com.google.devtools.ksp") version "1.9.0-1.0.13"
 }
 
 android {
@@ -70,6 +71,13 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences-android:1.1.2")
     implementation("androidx.datastore:datastore:1.1.2")
     implementation("com.google.protobuf:protobuf-javalite:4.29.3")
+
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+    // Coroutine
+    implementation("androidx.room:room-ktx:$room_version")
 }
 
 protobuf {
